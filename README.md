@@ -10,7 +10,7 @@
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat)](LICENSE)
 
 <p align="center">
-  <video src="smart_grid_agent_demo.mp4" width="100%" controls autoplay loop muted></video>
+  <video src="https://github.com/Ahmetcemil1/smart-grid-agent/raw/main/smart_grid_agent_demo.mp4" width="100%" controls autoplay loop muted></video>
 </p>
 
 ---
