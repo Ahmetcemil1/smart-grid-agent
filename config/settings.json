@@ -1,0 +1,56 @@
+{
+  "thresholds": {
+    "cpu_idle_percent": 10,
+    "memory_idle_percent": 15,
+    "disk_io_idle_mbps": 5,
+    "consecutive_idle_checks": 3
+  },
+  "services": {
+    "monitored": [
+      {
+        "name": "baloo_file_indexer",
+        "display": "Baloo File Indexer",
+        "systemctl": "baloo_file_extractor",
+        "criticality": "low",
+        "estimated_cpu_save": 4.2,
+        "estimated_memory_save_mb": 85
+      },
+      {
+        "name": "tracker-miner-fs",
+        "display": "GNOME Tracker Miner",
+        "systemctl": "tracker-miner-fs-3",
+        "criticality": "low",
+        "estimated_cpu_save": 3.1,
+        "estimated_memory_save_mb": 62
+      },
+      {
+        "name": "packagekitd",
+        "display": "PackageKit Daemon",
+        "systemctl": "packagekit",
+        "criticality": "low",
+        "estimated_cpu_save": 1.8,
+        "estimated_memory_save_mb": 45
+      },
+      {
+        "name": "evolution-addressbook",
+        "display": "GNOME Address Book",
+        "systemctl": "evolution-addressbook-factory",
+        "criticality": "low",
+        "estimated_cpu_save": 0.9,
+        "estimated_memory_save_mb": 38
+      }
+    ],
+    "protected": [
+      "NetworkManager",
+      "sshd",
+      "dbus",
+      "systemd-logind",
+      "display-manager",
+      "firewalld"
+    ]
+  },
+  "savings": {
+    "cost_per_cpu_percent_per_hour": 0.0018,
+    "cost_per_mb_memory_per_hour": 0.000025
+  }
+}

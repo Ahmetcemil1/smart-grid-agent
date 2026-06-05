@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart-Grid Agent — Autonomous FinOps Orchestrator</title>
+  <meta name="description" content="Smart-Grid Agent bridges the gap between observability and automated action, turning raw Dynatrace metrics into actionable cost-saving decisions." />
+  <meta name="keywords" content="FinOps, Dynatrace, AI Agent, Cost Optimization, Kubernetes, Smart-Grid" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- ─────────────────────────────────────── -->
+  <!--  HEADER                                 -->
+  <!-- ─────────────────────────────────────── -->
+  <header class="header" role="banner">
+    <div class="header-inner">
+      <div class="header-brand">
+        <div class="brand-icon" aria-hidden="true">
+          <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 4L36 13V27L20 36L4 27V13L20 4Z" stroke="url(#grad1)" stroke-width="1.5" fill="none"/>
+            <path d="M12 20L17 25L28 14" stroke="url(#grad1)" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="20" cy="20" r="3" fill="url(#grad1)"/>
+            <defs>
+              <linearGradient id="grad1" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#6366f1"/>
+                <stop offset="100%" stop-color="#06b6d4"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div>
+          <h1 class="brand-name">Smart-Grid Agent</h1>
+          <p class="brand-sub">Autonomous FinOps Orchestrator</p>
+        </div>
+      </div>
+
+      <nav class="header-nav" role="navigation" aria-label="Main navigation">
+        <button class="nav-btn active" id="nav-dashboard" onclick="showSection('dashboard')">Dashboard</button>
+        <button class="nav-btn" id="nav-actions" onclick="showSection('actions')">Action Queue</button>
+        <button class="nav-btn" id="nav-savings" onclick="showSection('savings')">Savings</button>
+        <button class="nav-btn" id="nav-logs" onclick="showSection('logs')">Logs</button>
+      </nav>
+
+      <div class="header-controls">
+        <div class="agent-status-pill" id="agent-status-pill">
+          <span class="status-dot" id="status-dot"></span>
+          <span id="agent-status-text">Connecting...</span>
+        </div>
+        <button class="btn-primary" id="btn-run-cycle" onclick="triggerCycle()">
+          <span>▶ Run Cycle</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ─────────────────────────────────────── -->
+  <!--  MAIN CONTENT                           -->
+  <!-- ─────────────────────────────────────── -->
+  <main class="main" role="main">
+
+    <!-- ══ SECTION: Dashboard ══ -->
+    <section id="section-dashboard" class="section active" aria-labelledby="dashboard-heading">
+      <div class="section-header">
+        <h2 id="dashboard-heading" class="section-title">System Overview</h2>
+        <div class="last-update">Last update: <span id="last-update-time">—</span></div>
+      </div>
+
+      <!-- Metric Cards -->
+      <div class="metrics-grid" role="region" aria-label="System metrics">
+        <article class="metric-card" id="card-cpu">
+          <div class="metric-label">
+            <span class="metric-icon">⚡</span> CPU Usage
+          </div>
+          <div class="metric-value" id="metric-cpu">—</div>
+          <div class="metric-bar">
+            <div class="metric-bar-fill" id="bar-cpu" role="progressbar" aria-label="CPU usage" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+          <div class="metric-trend" id="trend-cpu"></div>
+        </article>
+
+        <article class="metric-card" id="card-memory">
+          <div class="metric-label">
+            <span class="metric-icon">🧠</span> Memory Usage
+          </div>
+          <div class="metric-value" id="metric-memory">—</div>
+          <div class="metric-bar">
+            <div class="metric-bar-fill" id="bar-memory" role="progressbar" aria-label="Memory usage" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+          <div class="metric-trend" id="trend-memory"></div>
+        </article>
+
+        <article class="metric-card" id="card-disk">
+          <div class="metric-label">
+            <span class="metric-icon">💾</span> Disk I/O
+          </div>
+          <div class="metric-value" id="metric-disk">—</div>
+          <div class="metric-sub" id="metric-disk-sub">Read / Write</div>
+        </article>
+
+        <article class="metric-card" id="card-status">
+          <div class="metric-label">
+            <span class="metric-icon">🔍</span> System Status
+          </div>
+          <div class="metric-value" id="metric-status">—</div>
+          <div class="metric-sub" id="metric-status-sub">Dynatrace Monitored</div>
+          <div class="status-badge" id="status-badge">—</div>
+        </article>
+      </div>
+
+      <!-- Real-time CPU Chart -->
+      <div class="chart-row">
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3 class="chart-title">CPU Usage — Real-Time</h3>
+            <div class="chart-legend">
+              <span class="legend-dot" style="background:#6366f1"></span> CPU %
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chart-cpu" aria-label="CPU usage over time" role="img"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3 class="chart-title">Running Services</h3>
+            <div class="chart-badge" id="services-count-badge">0 services</div>
+          </div>
+          <div id="services-list" class="services-list" role="list" aria-label="Running services"></div>
+        </div>
+      </div>
+
+      <!-- AI Brain Status -->
+      <div class="brain-card">
+        <div class="brain-header">
+          <div class="brain-icon" aria-hidden="true">🧬</div>
+          <div>
+            <h3 class="brain-title">Gemini AI Brain — Latest Analysis</h3>
+            <p class="brain-sub" id="brain-engine">Initializing...</p>
+          </div>
+          <div class="brain-confidence" id="brain-confidence">—</div>
+        </div>
+        <div class="brain-analysis" id="brain-analysis">Waiting for first agent cycle...</div>
+        <div class="brain-actions-preview" id="brain-actions-preview"></div>
+      </div>
+    </section>
+
+    <!-- ══ SECTION: Action Queue ══ -->
+    <section id="section-actions" class="section" aria-labelledby="actions-heading">
+      <div class="section-header">
+        <h2 id="actions-heading" class="section-title">Action Queue — Human-in-the-Loop</h2>
+        <div class="pending-count-badge" id="pending-count-badge">
+          <span id="pending-count">0</span> pending
+        </div>
+      </div>
+
+      <div class="hitl-banner" role="alert">
+        <span class="hitl-icon">🔒</span>
+        <div>
+          <strong>Security-First Design:</strong> No action executes automatically.
+          Every AI recommendation requires your explicit approval before execution.
+        </div>
+      </div>
+
+      <div id="pending-actions-container" class="actions-container">
+        <div class="empty-state" id="empty-actions">
+          <div class="empty-icon">✅</div>
+          <p>No pending actions. System is optimal or agent has not run yet.</p>
+          <button class="btn-secondary" onclick="triggerCycle()">Run Agent Cycle</button>
+        </div>
+      </div>
+
+      <div class="section-divider">
+        <span>Recent Actions</span>
+      </div>
+      <div id="recent-actions-container" class="actions-container"></div>
+    </section>
+
+    <!-- ══ SECTION: Savings Dashboard ══ -->
+    <section id="section-savings" class="section" aria-labelledby="savings-heading">
+      <div class="section-header">
+        <h2 id="savings-heading" class="section-title">💰 Savings Dashboard</h2>
+        <p class="section-subtitle">Smart-Grid Agent bridges the gap between observability and automated action</p>
+      </div>
+
+      <div class="savings-hero">
+        <div class="savings-stat">
+          <div class="savings-stat-label">CPU % Saved</div>
+          <div class="savings-stat-value" id="savings-cpu">0.00%</div>
+          <div class="savings-stat-trend" id="savings-cpu-trend">—</div>
+        </div>
+        <div class="savings-stat">
+          <div class="savings-stat-label">Memory Freed</div>
+          <div class="savings-stat-value" id="savings-mem">0 MB</div>
+          <div class="savings-stat-trend" id="savings-mem-trend">—</div>
+        </div>
+        <div class="savings-stat savings-stat-highlight">
+          <div class="savings-stat-label">Cost Saved / Hour</div>
+          <div class="savings-stat-value" id="savings-cost">$0.000000</div>
+          <div class="savings-stat-trend" id="savings-cost-trend">—</div>
+        </div>
+        <div class="savings-stat">
+          <div class="savings-stat-label">Actions Executed</div>
+          <div class="savings-stat-value" id="savings-executed">0</div>
+          <div class="savings-stat-trend" id="savings-executed-trend">—</div>
+        </div>
+      </div>
+
+      <div class="projections-row">
+        <div class="projection-card">
+          <div class="projection-label">Daily Savings</div>
+          <div class="projection-value" id="proj-daily">$0.0000</div>
+        </div>
+        <div class="projection-card projection-card-highlight">
+          <div class="projection-label">Monthly Savings</div>
+          <div class="projection-value" id="proj-monthly">$0.00</div>
+        </div>
+        <div class="projection-card">
+          <div class="projection-label">Actions Approved</div>
+          <div class="projection-value" id="proj-approved">0</div>
+        </div>
+        <div class="projection-card">
+          <div class="projection-label">Actions Rejected</div>
+          <div class="projection-value" id="proj-rejected">0</div>
+        </div>
+      </div>
+
+      <!-- Savings Chart -->
+      <div class="chart-card" style="margin-top: 1.5rem;">
+        <div class="chart-header">
+          <h3 class="chart-title">Cumulative Savings Timeline</h3>
+          <div class="chart-legend">
+            <span class="legend-dot" style="background:#10b981"></span> CPU Saved %
+            <span class="legend-dot" style="background:#6366f1; margin-left:1rem"></span> Cost Saved
+          </div>
+        </div>
+        <div class="chart-container" style="height:280px">
+          <canvas id="chart-savings" aria-label="Savings over time" role="img"></canvas>
+        </div>
+      </div>
+
+      <!-- Donut Chart -->
+      <div class="chart-row" style="margin-top: 1.5rem">
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3 class="chart-title">Action Status Distribution</h3>
+          </div>
+          <div class="chart-container" style="height:220px">
+            <canvas id="chart-donut" aria-label="Action status distribution" role="img"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3 class="chart-title">Savings by Service</h3>
+          </div>
+          <div id="savings-by-service" class="services-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ SECTION: Logs ══ -->
+    <section id="section-logs" class="section" aria-labelledby="logs-heading">
+      <div class="section-header">
+        <h2 id="logs-heading" class="section-title">Audit Trail & Action Log</h2>
+        <button class="btn-secondary" onclick="refreshLogs()">↺ Refresh</button>
+      </div>
+      <div class="log-terminal" id="log-terminal" role="log" aria-label="Agent audit log" aria-live="polite">
+        <div class="log-placeholder">Loading audit log...</div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ─────────────────────────────────────── -->
+  <!--  APPROVAL MODAL                         -->
+  <!-- ─────────────────────────────────────── -->
+  <div id="approval-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modal-title">⚡ Confirm Action Execution</h3>
+        <button class="modal-close" onclick="closeModal()" aria-label="Close modal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-service" id="modal-service-name">—</div>
+        <div class="modal-action-type" id="modal-action-type">—</div>
+        <div class="modal-reason" id="modal-reason">—</div>
+        <div class="modal-savings-preview">
+          <div class="modal-saving">
+            <span>Est. CPU Save</span>
+            <strong id="modal-cpu-save">—</strong>
+          </div>
+          <div class="modal-saving">
+            <span>Est. Memory Save</span>
+            <strong id="modal-mem-save">—</strong>
+          </div>
+        </div>
+        <div class="modal-warning" role="alert">
+          ⚠️ This will execute <code>systemctl stop</code> on the selected service.
+          The action is logged for audit purposes.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-danger" id="modal-reject-btn" onclick="rejectFromModal()">
+          ✕ Reject
+        </button>
+        <button class="btn-success" id="modal-approve-btn" onclick="approveFromModal()">
+          ✓ Approve & Execute
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast notifications -->
+  <div id="toast-container" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

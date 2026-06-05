@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+wheels/
+*.egg-link
+.installed.cfg
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+smart_grid_venv/
+
+# Environment / secrets
+.env
+*.env.local
+
+# Runtime data (auto-generated)
+data/
+*.log
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Test cache
+.pytest_cache/
+.coverage
+htmlcov/
+*.pytest_cache
+
+# Distribution
+*.tar.gz
+*.zip
