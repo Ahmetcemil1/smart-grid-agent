@@ -9,6 +9,10 @@
 [![Tests](https://img.shields.io/badge/Tests-37%2F37_PASSED-brightgreen?style=flat&logo=pytest)](https://pytest.org)
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat)](LICENSE)
 
+<p align="center">
+  <video src="smart_grid_agent_demo.mp4" width="100%" controls autoplay loop muted></video>
+</p>
+
 ---
 
 ## 🏆 Google Cloud Rapid Agent Hackathon Submission
