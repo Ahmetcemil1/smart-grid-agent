@@ -2,20 +2,27 @@
 ╔══════════════════════════════════════════════════════════════╗
 ║  Smart-Grid Agent — Unit Test Suite                          ║
 ║  Covers: Collector, Brain, Executor Security, Action Log     ║
+║                                                              ║
+║  Run: pytest tests/test_agent.py -v                          ║
+║  sys.path is configured automatically via conftest.py        ║
 ╚══════════════════════════════════════════════════════════════╝
 """
 
-import sys
 import os
 import json
 import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-# Add backend to import path
-sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
+# Set environment for tests before any imports
 os.environ["AGENT_MODE"] = "demo"
 os.environ["GEMINI_API_KEY"] = "test-key-placeholder"
+
+# Backend imports — resolved via conftest.py sys.path setup
+from collector import get_collector, DemoCollector, DynatraceCollector, DynatraceMCPContext  # noqa: E402
+from brain import GeminiBrain  # noqa: E402
+from executor import ExecutorModule, PROTECTED_SERVICES  # noqa: E402
+import action_log  # noqa: E402
 
 
 # ─────────────────────────────────────────────
